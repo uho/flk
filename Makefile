@@ -150,7 +150,7 @@ else
 MDEBUG=false
 endif
 
-CFLAGS=-m32 -Wall -pipe -D__UNIX__ -D__LINUX__ \
+CFLAGS=-m32 -Wall -Wno-unused-result -pipe -D__UNIX__ -D__LINUX__ \
        -DINSTALL_DIR=\"${INSTALL_LIBDIR}/\" \
        -DINSTALL_BIN_DIR=\"${INSTALL_BINDIR}/\" 
 
@@ -197,7 +197,7 @@ xflk: flk flkXforms.fs flkcontrol.fs
 	./flk flkXforms.fs flkcontrol.fs 
 
 flkkern: ${OBJECTS}
-	${LINK.o} $^ -o $@
+	${LINK.o} $^ -o $@ $(LDFLAGS)
 
 flk.flk: ${SRCS} srcdir.fs linuxsc.fs
 	$(FORTH32) "include f.fs"
@@ -206,10 +206,10 @@ srcdir.fs:
 	echo ${SRCDIRCMD} > srcdir.fs
 
 clean: 
-	rm srcdir.fs flk.flk default.flk flk xflk flkkern ${OBJECTS}
+	rm -f srcdir.fs flk.flk default.flk flk xflk flkkern ${OBJECTS}
 
 depend: 
-	rm .depends
+	rm -f .depends
 	make .depends
 
 .depends:
