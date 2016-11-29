@@ -1,0 +1,249 @@
+<HTML><HEAD><TITLE>FLK non-standard words</TITLE></HEAD><BODY>
+<TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="intro.html">Previous</A></TD>
+    <TD><IMG SRC="flk.gif"></TD>
+    <TD><A HREF="license.html">Next</A></TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE><HR>
+
+<H1>FLK non-standard words</H1>
+This section describes useful words provided by the system. Since there a
+lots of useful words in the system only those are explained which are
+important for every day's work.
+
+<A NAME=ccstring><H3>Cell counted string handling</H3></A>
+To overcome the limitations of the byte counted strings proposed by the
+standard cell counted strings are available. Both static variables and
+dynamicly allocated ones can be used.
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>$COUNT</TD><TD>(addr -- addr+cell count)</TD><TD>COUNT for cell counted
+strings</TD></TR>
+<TR><TD>$cat</TD><TD>(caddr u addr -- )</TD><TD>Append the cell counted string at
+addr by the given string.</TD></TR>
+<TR><TD>$copy</TD><TD>(caddr u addr -- )</TD><TD>Replace the cell counted string at
+addr by the given string.</TD></TR>
+<TR><TD>$VARIABLE</TD><TD>(n -&lt;name&gt;-)</TD><TD>Create a cell counted
+string variable reserving n characters. </TD></TR>
+</TABLE>
+
+<A NAME=vocs><H3>Vocabularies</H3></A>
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>VOCS</TD><TD>( -- )</TD><TD>Show the names of all known vocabularies.</TD></TR>
+<TR><TD>.VOC</TD><TD>( wid --) </TD><TD>Display the name of the given wordlist.</TD></TR>
+<TR><TD>SEARCH-WORDLISTS</TD><TD>( c-addr u -- 0 / xt 1 / xt -1 )</TD><TD>Perform
+the function of FIND but with a faster and simpler interface.</TD></TR>
+<TR><TD>VOCABULARY</TD><TD>( -&lt;name&gt;- )</TD><TD>Create a named wordlist.
+The execution of name replaces the first word list in the search order.</TD></TR>
+</TABLE>
+
+<A NAME=transport><H3>Transport functions</H3></A>
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>TURN</TD><TD>( t3 t2 t1 t0 -- t2 t1 t0 t3 )</TD><TD>ROT with 4 items</TD></TR>
+<TR><TD>-TURN</TD><TD>( t3 t2 t1 t0 -- t0 t3 t2 t1 )</TD><TD>-ROT with 4 items</TD></TR>
+<TR><TD>TWIST</TD><TD>( t4 t3 t2 t1 t0 -- t3 t2 t1 t0 t4 )</TD><TD>ROT with 5
+items</TD></TR>
+<TR><TD>-TWIST</TD><TD>( t4 t3 t2 t1 t0 -- t0 t4 t3 t2 t1 )</TD><TD>-ROT with 5
+items</TD></TR>
+<TR><TD>ROTARE</TD><TD>( t5 t4 t3 t2 t1 t0 -- t4 t3 t2 t1 t0 t5 )</TD><TD>ROT
+with 6 items </TD></TR>
+<TR><TD>-ROTARE</TD><TD>( t5 t4 t3 t2 t1 t0 -- t0 t5 t4 t3 t2 t1 )</TD><TD>-ROT
+with 6 items </TD></TR>
+<TR><TD>PLUCK</TD><TD>( t2 t1 t0 -- t2 t1 t0 t2 )</TD><TD>OVER with 3 items</TD></TR>
+<TR><TD>FLOCK</TD><TD>( t3 t2 t1 t0 -- t3 t2 t1 t0 t3 )</TD><TD>OVER with 4 items</TD></TR>
+<TR><TD>exchange</TD><TD>( x1 addr -- x2 )</TD><TD>Exchange the value at addr
+with x1 returning the old content of addr</TD></TR>
+<TR><TD>nDROP</TD><TD>( n*x n-- )</TD><TD>Drop the top n+1 items.</TD></TR>
+<TR><TD>TO++</TD><TD>( -&lt;name&gt;- )</TD><TD>Increase a VALUE by one.</TD></TR>
+<TR><TD>TO--</TD><TD>( -&lt;name&gt;- )</TD><TD>Derease a VALUE by one.</TD></TR>
+<TR><TD>+TO</TD><TD>( x -&lt;name&gt;- )</TD><TD>Add a number to a VALUE.</TD></TR>
+</TABLE>
+
+<A NAME=string><H3>String tools</H3></A>
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>CAPS-COMPARE</TD><TD>( caddr1 u1 caddr2 u2 -- n</TD><TD>Perform the
+function of the word COMPARE but case insensitive.</TD></TR>
+<TR><TD>ARGC</TD><TD>( -- u )</TD><TD>Return the number of commandline arguments.</TD></TR>
+<TR><TD>ARGV</TD><TD>( -- addr )</TD><TD>Return the address of the array containg
+the addresses of zero-terminated string containing the commandline arguments.
+There are exactly ARGC items stored in consequtive cells beginning at the
+returned address.</TD></TR>
+<TR><TD>CHAR-H-LINE+</TD><TD>( x y w -- )</TD><TD>Draw a horizontal line of w
+characters starting at (x,y).</TD></TR>
+<TR><TD>CHAR-V-LINE+</TD><TD>( x y h -- )</TD><TD>Draw a vertical line of h
+characters starting at (x,y).</TD></TR>
+<TR><TD>CHAR-FRAME</TD><TD>( x y width height -- )</TD><TD>Draw a frame of the
+given width and height with the left upper corner at (x,y).</TD></TR>
+<TR><TD>strlen</TD><TD>( caddr -- caddr u )</TD><TD>Count the characters in a
+zero terminated string.</TD></TR>
+</TABLE>
+
+<A NAME=system><H3>System storage</H3></A>
+FLK is able to save its current state to disk. Sadly you cannot save to a
+currently running file. The code area is the room where all code is compiled
+to and where the headers are placed. The data area holds the data space
+accessed by CREATE etc.
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>SAVE-SYSTEM</TD><TD>( caddr u -- )</TD><TD>Saves the system to the file
+with the given name. You need to have write permission. If the file already
+exists and contains an image it is overwritten. Otherwise the image is
+appended or the file is created.</TD></TR>
+<TR><TD>TURN-KEY</TD><TD>( caddr u -&lt;name&gt;- )</TD><TD>Make name the first word to
+be executed and perform the function of SAVE-SYSTEM.</TD></TR>
+<TR><TD>copy-executable</TD><TD>( name #name -- )</TD><TD>Copy the running
+executable to a different name in preparation for SAVE-SYSTEM or TURN-KEY.</TD></TR>
+<TR><TD>set-codesize</TD><TD>( n -- )</TD><TD>Set a new size for the code area.</TD></TR>
+<TR><TD>set-datasize</TD><TD>( n -- )</TD><TD>Set a new size for the data area.</TD></TR>
+<TR><TD>new-system</TD><TD>( addr len -- )</TD><TD>Copy the current executable to
+the given name and save the system to it. The name must not be the name of the
+current executable.</TD></TR>
+</TABLE>
+
+<A NAME=misc><H3>Other useful words</H3></A>
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>INCLUDE</TD><TD>( -- )</TD><TD>Input a filename and perform INCLUDED.</TD></TR>
+<TR><TD>TODO</TD><TD>( -- )</TD><TD>Throw the "to do" exception. If you mark
+unfinished code with this word execution of the unfinished parts raises an
+exception and does not crash.</TD></TR>
+<TR><TD>INLINE</TD><TD>( -- )</TD><TD>Inline code into the currently compiled
+defintion. This word can bee seen as a throw-away primitive.</TD></TR>
+<TR><TD>DEFER</TD><TD>( -&lt;name&gt;- )</TD><TD>Create name. If you assign an xt to
+name using TO the execution of name calls the stored xt.</TD></TR>
+<TR><TD>r,</TD><TD>( x -- )</TD><TD>Perform the function of , but relocate the
+stored value.</TD></TR>
+<TR><TD>TURN-ON</TD><TD>( -&lt;name&gt;- )</TD><TD>Perform the equivalent to <CODE>TRUE
+TO name</CODE>.</TD></TR>
+<TR><TD>TURN-OFF</TD><TD>( -&lt;name&gt;- )</TD><TD>Perform the equivalent to <CODE>FALSE
+TO name</CODE>.</TD></TR>
+<TR><TD>ALERT</TD><TD>( -- )</TD><TD>Alert the user by a bell if
+<CODE>audible-signal</CODE> is <CODE>TRUE</CODE> or by flashing the screen.</TD></TR>
+<TR><TD>.NOW</TD><TD>( -- )</TD><TD>Tell the current time and date.</TD></TR>
+<TR><TD>&gt;UPPER</TD><TD>( char -- char2 )</TD><TD>Convert a character to upper
+case.</TD></TR>
+<TR><TD>SYSTEM</TD><TD>( addr len -- retval )</TD><TD>Shell out and perform the
+command in the string.</TD></TR>
+<TR><TD>RCONSTANT</TD><TD>( x -&lt;name&gt;- )</TD><TD>A relocated CONSTANT.</TD></TR>
+<TR><TD>RVALUE</TD><TD>( x -&lt;name&gt;- )</TD><TD>A relocated VALUE.</TD></TR>
+<TR><TD>COMMENT</TD><TD>--</TD><TD>Mark the last defined word as a comment,
+i.e. execute it instead of caching it. If you <CODE>POSTPONE</CODE> a
+<CODE>COMMENT</CODE>ing word the current definition becomes a comment itself.</TD></TR>
+<TR><TD>PARSING</TD><TD>--</TD><TD>Mark the last defined word to be parsing.
+You have to give this flag if you mess around in the parsing area and do not
+use <CODE>PARSE</CODE> directly or indirectly.</TD></TR>
+<TR><TD>.faulty-word</TD><TD>( fault-at base -- )</TD><TD>Debugging utility.
+If you encounter a segmentation fault you can't explain just run FLK in
+<TT>gdb</TT> and write down the address of the fault and the base address of
+the image. Then restart the same image again and execute
+<CODE>.faulty-word</CODE>. It tells you which word is closest to the given
+address.</TD></TR>
+</TABLE>
+
+<A NAME=macro><H3>Macro words</H3></A>
+By default FLK compiles every word as separate subroutine ended by return.
+Sometimes this is not desirable e.g. if words are factored for readability and
+the factors are not meant to be used interactively. Using the macro recorder
+invoced by <CODE>macro</CODE> you can define those words to be compiled inline.
+<p>
+<CODE>macro</CODE> reads the input until an empty line or the end of the file
+is found and connects these lines to a single string separated by new-lines.
+When the created word is executed (it is <CODE>IMMEDIATE</CODE>) the recorded
+string is passed to <CODE>EVALUATE</CODE>.  All words are allowed in the macro
+but be aware that long definitions can use a lot of memory in the
+dictionary.<p>
+The flag setting words are provided here to.
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>macro</TD><TD>( -&lt;name&gt;- )</TD><TD>Create an <CODE>IMMEDIATE</CODE> word
+<CODE>name</CODE> and record all further up to the next empty one into the
+definition. When <CODE>name</CODE> is executed the recorded string is processed
+by <CODE>EVALUATE</CODE>.</TD></TR>
+</TABLE>
+
+<A NAME=library><H3>Shared library words</H3></A>
+To extend the abilities of FLK even further you can bind dynamically loaded
+libaries or shared objects using the following words. The used syntax is
+similiar but not equal to bigforth.<p>
+When a library is loaded and the system is saved the library is loaded again
+at the next start of the new system. <p>
+If either a symbol name or library file can not be found an error message from
+the linker is produced and <CODE>ABORT</CODE> is called.<p>
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Stack effect</TD><TD>Function</TD></TR>
+<TR><TD>lib</TD><TD>( addr len -&lt;name&gt;- )</TD><TD>Create <CODE>name</CODE>,
+load the library who's filename is given in the string and make the library
+the current library (The one to be searched for symbols.). Execution of
+<CODE>name</CODE> makes the library the current library too..</TD></TR>
+<TR><TD>fct:</TD><TD>( returns -&lt;name parameters&gt;- )</TD><TD>Declare a
+word <CODE>name</CODE> and bind the function <CODE>name</CODE> found in the
+current library to it.  The accepted return types are <CODE>int</CODE>,
+<CODE>double</CODE> and <CODE>void</CODE>. The parameters are declared in
+<B><I>reverse</I></B> and passed in the same order as a C-prototype. Accepted
+parameter types are <CODE>int</CODE>, <CODE>double</CODE>, <CODE>float</CODE>
+and <CODE>void</CODE>. All integer and pointer parameters are passed as
+<CODE>int</CODE>. As an abbreviation <CODE>ints</CODE> is provided. <CODE>2
+ints</CODE> is the same as <CODE>int int</CODE> but generates more efficient
+code.</TD></TR>
+<TR><TD>var:</TD><TD>( -&lt;name&gt;- )</TD><TD>Bind the address of the
+variable <CODE>name</CODE> found in the the current library to
+<CODE>name</CODE>. <CODE>name</CODE> behaves like declared by
+<CODE>VARIABLE</CODE>.</TD></TR>
+<TR><TD>libs</TD><TD>( -- )</TD><TD>Display the names of the loaded libraries.</TD></TR>
+</TABLE>
+
+<A NAME=syscall><H3>Linux system calls</H3></A>
+This feature is somehow experimental at the moment. You can use the Linux
+system calls (man page section 2 functions) like colon definitions. It is not
+advisable to use them interactively but it is possible and if you're
+careful...<p>
+The actual words are named <CODE>sys_</CODE><B>name</B> where <B>name</B> is
+the name of the call as found in <CODE>/usr/include/asm/unistd.h</CODE>.<p>
+I present no comment on the individual words. Look into the man page if you're 
+curious. The calling order is left-to-right i.e. <CODE>write(a,b,c);</CODE> in
+C becomes <CODE>a b c sys_write</CODE> in FORTH.<p>
+The return value from them is put onto the stack after removal of the
+parameters. If this value is negative the call failed and the number is the
+negative content of <CODE>errno</CODE> in C.<p>
+The script <CODE>mksc</CODE> to generate <CODE>linuxsc.fs</CODE> is included
+but not connected to the <TT>Makefile</TT>. If anyone finds bugs in the script
+please send a mail to me.<p>
+Some system calls are listed with a negative number of parameters. Those calls
+are either obsolete or require more than 5 parameters. Their number of
+parameters (the first case) are not known or the calling sequence for that
+many parameters is not documented anywhere. A Linux hacker who knows this
+could be helpful.<p>
+
+<A NAME=flags><H3>Flags</H3></A>
+<TABLE BORDER=2 COLS=3>
+<TR><TD>Word</TD><TD>Behaviour when TRUE</TD><TD>Behaviour when FALSE</TD></TR>
+<TR><TD>CAPS</TD><TD>String comparison is case insensitive.</TD><TD>String
+comparison is case sensitive.</TD></TR>
+<TR><TD>audible-signal</TD><TD>ALERT rings a bell.</TD><TD>ALERT flashes the
+screen.</TD></TR>
+<TR><TD>redef-warning</TD><TD>A warning is printed, when a word in the same
+wordlist is redefined.</TD><TD>The warning is not displayed.</TD></TR>
+<TR><TD>checkpoints</TD><TD>Checkpoints are compiled or
+displayed.</TD><TD>Checkpoints are ignored.</TD></TR>
+</TABLE>
+
+<HR><TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="intro.html">Previous</A></TD>
+    <TD ALIGN=CENTER><H1>FLK</H1></TD>
+    <TD><A HREF="license.html">Next</A></TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE>
+</BODY></HTML>
+<!-- vim:tw=78
+>

@@ -1,0 +1,359 @@
+<HTML><HEAD><TITLE>ANS required documentation</TITLE></HEAD><BODY>
+<TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="license.html">Previous</A></TD>
+    <TD><IMG SRC="flk.gif"></TD>
+    <TD>Next</TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE><HR>
+<H1>ANS required documentation</H1>
+
+<H2>Provided word sets</H2>
+To the best of knowledge FLK is an<p>
+ANS Forth System
+<UL>
+<LI> providing the Core Extensions word set
+<LI> providing the Double-Number word set
+<LI> providing the Double-Number Extensions word set
+<LI> providing the Exception word set
+<LI> providing the Exception Extensions word set
+<LI> providing the Facility word set
+<LI> providing the Facility Extensions word set
+<LI> providing the File Access word set
+<LI> providing the File Access Extensions word set
+<LI> providing the Floating-Point word set
+<LI> providing the Floating-Point Extensions word set
+<LI> providing the Memory-Allocation word set
+<LI> providing the Memory-Allocation Extensions
+<LI> providing the Programming-Tools word set
+<LI> providing the Programming-Tools Extensions word set
+<LI> providing the Search-Order word set
+<LI> providing the Search-Order Extensions word set
+<LI> providing the String word set
+<LI> providing the String Extensions word set
+</UL>
+
+<H2>Implementation defined values</H2>
+<UL>
+<LI><STRONG>aligned address requirements (3.1.3.3 Addresses)</STRONG>: Since
+FLK is tailored to the Intel 386+ CPU's running Linux, neither the cell
+aligned addresses nor the character aligned addresses have to be aligned. It
+is recommended for speed to align cells to addresses that are multiples of
+four.
+
+<LI><STRONG>behavior of 6.1.1320 <CODE>EMIT</CODE> for non-graphic
+characters</STRONG>: EMIT passes its argument directly to the terminal, so its
+behavior is dependend upon the behavior of the terminal and the used character
+set.
+
+<LI><STRONG>character editing of 6.1.0695 <CODE>ACCEPT</CODE> and 6.2.1390
+<CODE>EXPECT</CODE></STRONG>: If the used terminal supports them the keys
+<TT>cursor left</TT>, <TT>cursor right</TT>, <TT>back space</TT>, <TT>delete
+character</TT>, <TT>cursor home</TT>, <TT>cursor end</TT>, <TT>return</TT>,
+<TT>set tabulator</TT>, <TT>cursor up</TT> and <TT>cursor down</TT> are
+accepted.
+
+<LI><STRONG>character set (3.1.2 Character types, 6.1.1320 <CODE>EMIT</CODE>,
+6.1.1750 <CODE>KEY</CODE>)</STRONG>: The character set used by
+<CODE>EMIT</CODE> is terminal depended. The characters returned by
+<CODE>KEY</CODE> are limitied to the range of decimal 32...127 inclusive.
+
+<LI><STRONG>character-aligned address requirements (3.1.3.3
+Addresses)</STRONG>: No restriction. Any address is character aligned.
+
+<LI><STRONG>character-set-extensions matching characteristics (3.4.2 Finding
+definition names)</STRONG>: Word names are copied to the dictionary as found
+(case sensitive behaviour) although find names can be case sensitive or
+insensitive.
+
+<LI><STRONG>conditions under which control characters match a space delimiter
+(3.4.1.1 Delimiters)</STRONG>: <CODE>PARSE</CODE> and all other words that
+parse accept characters below or equal to 32 as delimiters.
+
+<LI><STRONG>format of the control-flow stack (3.2.3.2 Control-flow
+stack)</STRONG>: The control flow stack is implemented using the data stack.
+
+<LI><STRONG>conversion of digits larger than thirty-five (3.2.1.2 Digit
+conversion)</STRONG>: A number may contain upper of lower case letters. If
+they exceed the range of digits, the conversion is ended without error. If
+the number is converted by the interpreter, the whole word is considered
+unknown.
+
+<LI><STRONG>display after input terminates in 6.1.0695 <CODE>ACCEPT</CODE> and
+6.2.1390 <CODE>EXPECT</CODE></STRONG>: The cursor is placed to the right of
+the last character.
+
+<LI><STRONG>exception abort sequence (as in 6.1.0680
+<CODE>ABORT"</CODE>)</STRONG>: Address and length of the string is transfered
+to special variables and the exception -2 is raised.
+
+<LI><STRONG>input line terminator (3.2.4.1 User input device)</STRONG>: The
+character '\n' as defined by the C compiler. Its numerical value is 10
+decimal.
+
+<LI><STRONG>maximum size of a counted string, in characters (3.1.3.4 Counted
+strings, 6.1.2450 WORD)</STRONG>: 255
+
+<LI><STRONG>maximum size of a parsed string (3.4.1 Parsing)</STRONG>: 255
+
+<LI><STRONG>maximum size of a definition name, in characters (3.3.1.2
+Definition names)</STRONG>: 255
+
+<LI><STRONG>maximum string length for 6.1.1345 ENVIRONMENT?, in
+characters</STRONG>: unlimited
+
+<LI><STRONG>method of selecting 3.2.4.1 User input device</STRONG>: The user
+input device is the standard input of the program.
+
+<LI><STRONG>method of selecting 3.2.4.2 User output device</STRONG>: The user
+output device is the standard output of the program.
+
+<LI><STRONG>methods of dictionary compilation (3.3 The Forth
+dictionary)</STRONG>: The name space is distributed over the code space since
+the headers are in code space and the names are part of the header. It is
+possible to access the code space by <CODE>@</CODE> etc. An execution token is
+the address of the first byte of a header.
+
+<LI><STRONG>number of bits in one address unit (3.1.3.3 Addresses)</STRONG>: 8
+
+<LI><STRONG>number representation and arithmetic (3.2.1.1 Internal number
+representation)</STRONG>: little endian, two's complement
+
+<LI><STRONG>ranges for n, +n, u, d, +d, and ud (3.1.3 Single-cell types, 3.1.4
+Cell-pair types)</STRONG>: The following ranges are inclusive the given
+borders: <TT><TABLE>
+  <TR><TD ALIGN=RIGHT>n</TD><TD ALIGN=RIGHT>-2147483648</TD><TD ALIGN=RIGHT>2147483647</TD></TR>
+  <TR><TD ALIGN=RIGHT>+n</TD><TD ALIGN=RIGHT>0</TD><TD ALIGN=RIGHT>2147483647</TD></TR>
+  <TR><TD ALIGN=RIGHT>u</TD><TD ALIGN=RIGHT>0</TD><TD ALIGN=RIGHT>4294967295</TD></TR>
+  <TR><TD ALIGN=RIGHT>d</TD><TD ALIGN=RIGHT>-9223372036854775808</TD><TD ALIGN=RIGHT>9223372036854775807</TD></TR>
+  <TR><TD ALIGN=RIGHT>+d</TD><TD ALIGN=RIGHT>0</TD><TD ALIGN=RIGHT>9223372036854775807</TD></TR>
+  <TR><TD ALIGN=RIGHT>ud</TD><TD ALIGN=RIGHT>0</TD><TD ALIGN=RIGHT>18446744073709551615</TD></TR>
+</TABLE></TT>
+
+<LI><STRONG>read-only data-space regions (3.3.3 Data space)</STRONG>: The
+whole data space is writable although is not recommended to bomb around at
+will.
+
+<LI><STRONG>size of buffer at 6.1.2450 <CODE>WORD</CODE> (3.3.3.6 Other
+transient regions)</STRONG>: 256 characters, defined by the meta compiler
+constant <CODE>#WORD-PAD</CODE>
+
+<LI><STRONG>size of one cell in address units (3.1.3 Single-cell
+types)</STRONG>: 4
+
+<LI><STRONG>size of one character in address units (3.1.2 Character
+types)</STRONG>: 1
+
+<LI><STRONG>size of the keyboard terminal input buffer (3.3.3.5 Input
+buffers)</STRONG>: 256 character, defined by the meta compiler constant
+<CODE>#TIB</CODE>
+
+<LI><STRONG>size of the pictured numeric output string buffer (3.3.3.6 Other
+transient regions)</STRONG>: 80 characters, defined by the meta compiler
+constant <CODE>((pnolen))</CODE>
+
+<LI><STRONG>size of the scratch area whose address is returned by 6.2.2000
+<CODE>PAD</CODE> (3.3.3.6 Other transient regions)</STRONG>: 256 characters,
+defined by the meta compiler constant <CODE>#PAD-LEN</CODE>
+
+<LI><STRONG>system case-sensitivity characteristics (3.4.2 Finding definition
+names)</STRONG>: FLK's case sensitivity is controlled by the variable
+<CODE>CAPS</CODE>. If it contains <CODE>TRUE</CODE> FLK is case insensitive,
+otherwise it is case sensitive.
+
+<LI><STRONG>system prompt (3.4 The Forth text interpreter, 6.1.2050
+QUIT)</STRONG>: <CODE>CR ."   OK " CR</CODE> in interpretation state and
+<CODE>CR ." ? "</CODE> in compilation state.
+
+<LI><STRONG>type of division rounding (3.2.2.1 Integer division, 6.1.0100
+<CODE>*/</CODE>, 6.1.0110 <CODE>*/MOD</CODE>, 6.1.0230 <CODE>/</CODE>,
+6.1.0240 <CODE>/MOD</CODE>, 6.1.1890 <CODE>MOD</CODE>)</STRONG>: symmetric
+
+<LI><STRONG>values of 6.1.2250 STATE when true</STRONG>: <CODE>TRUE</CODE>
+
+<LI><STRONG>values returned after arithmetic overflow (3.2.2.2 Other integer
+operations)</STRONG>: wrap-around, (n modulo 2^32, d modulo 2^64)
+
+<LI><STRONG>whether the current definition can be found after 6.1.1250
+<CODE>DOES&gt;</CODE> (6.1.0450 :)</STRONG>: The current definition can not be
+found after <CODE>DOES&gt;</CODE> 
+</UL>
+
+<H2>Ambiguos conditions</H2>
+<UL>
+
+<LI><STRONG>a name is neither a valid definition name nor a valid number
+during text interpretation (3.4 The Forth text interpreter)</STRONG>: Display
+the unknown word and raise exception -13.
+
+<LI><STRONG>a definition name exceeded the maximum length allowed (3.3.1.2
+Definition names)</STRONG>: The name is truncated to 255 characters
+
+<LI><STRONG>addressing a region not listed in 3.3.3 Data Space</STRONG>: As
+long as the address is a valid address in terms of the operating system
+nothing happens. Otherwise a segmentation fault is raised and handled by the
+operating system.
+
+<LI><STRONG>argument type incompatible with specified input parameter, e.g.,
+passing a flag to a word expecting an n (3.1 Data types)</STRONG>: The
+parameter is interpreted as if it was of the right type.
+
+<LI><STRONG>attempting to obtain the execution token, (e.g., with 6.1.0070
+<CODE>'</CODE>, 6.1.1550 <CODE>FIND</CODE>, etc.) of a definition with
+undefined interpretation semantics</STRONG>: The execution tokens of all known
+words can be obtained.
+
+<LI><STRONG>dividing by zero (6.1.0100 <CODE>*/</CODE>, 6.1.0110
+<CODE>*/MOD</CODE>, 6.1.0230 <CODE>/</CODE>,
+6.1.0240 <CODE>/MOD</CODE>, 6.1.1561 <CODE>FM/MOD</CODE>, 6.1.1890
+<CODE>MOD</CODE>, 6.1.2214 <CODE>SM/REM</CODE>, 6.1.2370
+<CODE>UM/MOD</CODE>, 8.6.1.1820 <CODE>M*/</CODE>)</STRONG>: The operating
+system raises a Floating exception.
+
+<LI><STRONG>insufficient data-stack space or return-stack space (stack
+overflow)</STRONG>: Ignored, might cause a segmentation fault.
+
+<LI><STRONG>insufficient space for loop-control parameters</STRONG>: Ignored,
+might cause a segmentation fault.
+
+<LI><STRONG>insufficient space in the dictionary</STRONG>: Exception -8 is
+raised.
+
+<LI><STRONG>interpretating a word with undefined interpretation
+semantics</STRONG>: Exception -14 is raised.
+
+<LI><STRONG>modifying the contents of the input buffer or a string literal
+(3.3.3.4 Text-literal regions, 3.3.3.5 Input buffers)</STRONG>: Ignored.
+
+<LI><STRONG>overflow of a pictured numeric output string</STRONG>: Exception
+-17 is raised.
+
+<LI><STRONG>parsed string overflow</STRONG>: The parsed string is truncated.
+
+<LI><STRONG>producing a result out of range, e.g., multiplication (using *)
+results in a value too big to be represented by a single-cell integer
+(6.1.0090 <CODE>*</CODE>, 6.1.0100 <CODE>*/</CODE>, 6.1.0110
+<CODE>*/MOD</CODE>, 6.1.0570 <CODE>&gt;NUMBER</CODE>, 6.1.1561
+<CODE>FM/MOD</CODE>, 6.1.2214 <CODE>SM/REM</CODE>, 6.1.2370
+<CODE>UM/MOD</CODE>, 6.2.0970 <CODE>CONVERT</CODE>, 8.6.1.1820
+<CODE>M*/</CODE>)</STRONG>: Wrap around. n modulo 2^32
+
+<LI><STRONG>reading from an empty data stack or return stack (stack
+underflow)</STRONG>: Ignored, might cause a segmentation fault.
+
+<LI><STRONG>unexpected end of input buffer, resulting in an attempt to use a
+zero-length string as a name</STRONG>: Exception -16 is raised.
+
+<LI><STRONG>&gt;IN greater than size of input buffer (3.4.1 Parsing)</STRONG>:
+Parsing is aborted, an empty string is returned.
+
+<LI><STRONG>6.1.2120 RECURSE appears after 6.1.1250 DOES&gt;</STRONG>: A call
+to the word beeing defined is compiled.
+
+<LI><STRONG>argument input source different than current input source for
+6.2.2148 <CODE>RESTORE-INPUT</CODE></STRONG>: The described input source is
+restored without a notification sent to the program.
+
+<LI><STRONG>data space containing definitions is de-allocated (3.3.3.2
+Contiguous regions)</STRONG>: If you are lucky, some words disappear. If not
+the system crashed at the next <CODE>FIND</CODE>
+or <CODE>SEARCH-WORDLIST</CODE>.
+
+<LI><STRONG>data space read/write with incorrect alignment (3.3.3.1 Address
+alignment)</STRONG>: Ignored.
+
+<LI><STRONG>data-space pointer not properly aligned (6.1.0150 <CODE>,</CODE>, 6.1.0860
+<CODE>C,</CODE>)</STRONG>: Ignored.
+
+<LI><STRONG>less than u+2 stack items (6.2.2030 <CODE>PICK</CODE>, 6.2.2150
+<CODE>ROLL</CODE>)</STRONG>: The system crashes with a segmentation fault.
+
+<LI><STRONG>loop-control parameters not available ( 6.1.0140
+<CODE>+LOOP</CODE>, 6.1.1680 <CODE>I</CODE>, 6.1.1730 <CODE>J</CODE>, 6.1.1760
+<CODE>LEAVE</CODE>, 6.1.1800 <CODE>LOOP</CODE>, 6.1.2380
+<CODE>UNLOOP</CODE>)</STRONG>: The values found on the return stack are
+interpreted as loop control parameters. The loop might stop, perform another
+run or the system crashes with a segmentation fault.
+
+<LI><STRONG>most recent definition does not have a name (6.1.1710
+IMMEDIATE)</STRONG>: The immediate flag is set in the header anyway. Nothing
+else happens.
+
+<LI><STRONG>name not defined by 6.2.2405 <CODE>VALUE</CODE> used by 6.2.2295
+<CODE>TO</CODE></STRONG>: As long as name is created by <CODE>CREATE</CODE> the
+value is stored. You are responsible that there was room for one cell.  If
+name is not CREATEd or a VALUE, exception -31 is raised.
+
+<LI><STRONG>name not found (6.1.0070 <CODE>'</CODE>, 6.1.2033
+<CODE>POSTPONE</CODE>, 6.1.2510 <CODE>[']</CODE>, 6.2.2530
+<CODE>[COMPILE]</CODE>)</STRONG>: Exception -13 is raised.
+
+<LI><STRONG>parameters are not of the same type (6.1.1240 <CODE>DO</CODE>,
+6.2.0620 <CODE>?DO</CODE>, 6.2.2440 <CODE>WITHIN</CODE>)</STRONG>: The
+parameters are interpreted as if they were of the same type.
+
+<LI><STRONG>6.1.2033 <CODE>POSTPONE</CODE> or 6.2.2530 <CODE>[COMPILE]</CODE>
+applied to 6.2.2295 TO</STRONG>: The equivalent of <CODE>['] TO COMPILE,</CODE>
+is performed.
+
+<LI><STRONG>string longer than a counted string returned by 6.1.2450
+<CODE>WORD</CODE></STRONG>: The string is handled as if is was shorter than a
+byte counted string. That's what the address,length notation is for, isn't it?
+
+<LI><STRONG>u greater than or equal to the number of bits in a cell (6.1.1805
+<CODE>LSHIFT</CODE>, 6.1.2162 <CODE>RSHIFT</CODE>)</STRONG>: Only the least
+significant bits of u are used, equivalent to e.g.<CODE>31 AND LSHIFT</CODE>. 
+
+<LI><STRONG>word not defined via 6.1.1000 <CODE>CREATE</CODE> (6.1.0550
+<CODE>&gt;BODY</CODE>, 6.1.1250 <CODE>DOES&gt;</CODE>)</STRONG>: Exception -31
+is raised.
+
+<LI><STRONG>words improperly used outside 6.1.0490 <CODE>&lt;#</CODE> and
+6.1.0040 <CODE>#&gt;</CODE> (6.1.0030 <CODE>#</CODE>, 6.1.0050
+<CODE>#S</CODE>, 6.1.1670 <CODE>HOLD</CODE>, 6.1.2210
+<CODE>SIGN</CODE>)</STRONG>: As long as the pictured numeric output buffer
+does not overflow it is ignored. Otherwise exception -17 is raised.
+</UL>
+
+<H2>Other system documentation</H2>
+<UL>
+<LI><STRONG>list of non-standard words using 6.2.2000 <CODE>PAD</CODE>
+(3.3.3.6 Other transient regions)</STRONG>: none
+
+<LI><STRONG>operator's terminal facilities available</STRONG>: Whether the
+terminal supports attributes and any other terminal facilities depend upon the
+terminal itself.
+
+<LI><STRONG>program data space available, in address units</STRONG>:
+Adjustable, current number reported upon startup.
+
+<LI><STRONG>return stack space available, in cells</STRONG>: 10000, defined by
+the meta compiler constant <CODE>CALL-STACK-SIZE</CODE> 
+
+<LI><STRONG>stack space available, in cells</STRONG>: 10000, defined by the
+meta compiler constant <CODE>DATA-STACK-SIZE</CODE> 
+
+<LI><STRONG>system dictionary space required, in address units</STRONG>:
+Execute <CODE>CHERE IMAGE-BASE - .</CODE> to learn the current value of
+allocated code space. Execute <CODE>HERE IMAGE-BASE - HA-CODESIZE @ - .</CODE>
+for the number of bytes in code space. Execute <CODE>HA-CODESIZE @ HA-DATASIZE
+@ + .</CODE> for the total dictionary size in bytes.
+
+</UL>
+
+<HR><TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="license.html">Previous</A></TD>
+    <TD ALIGN=CENTER><H1>FLK</H1></TD>
+    <TD>Next</TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE>
+</BODY></HTML>
+<!-- vim:tw=78
+>

@@ -1,0 +1,200 @@
+#! /usr/local/bin/gforth
+
+: sys-call 				( #in #sc -<name>- )
+  OVER 0 6 WITHIN INVERT IF ( unimplemented yet )
+    SOURCE NIP >IN !
+    2DROP
+  ELSE 					\ #in #sc <name>
+    BL PARSE 				\ #in #sc name #name
+    ." p: sys_" TYPE CR 		\ #in #sc
+    ."   (opt-flush)" CR
+    ."   regalloc-reset" CR
+    OVER 5 >= IF
+      ."   req-edi" CR
+    THEN
+    OVER 4 >= IF
+      ."   req-esi" CR
+    THEN
+    OVER 3 >= IF
+      ."   req-edx" CR
+    THEN
+    OVER 2 >= IF
+      ."   req-ecx" CR
+    THEN
+    OVER 1 >= IF 
+      ."   req-ebx" CR
+    THEN
+    ."   free-eax" CR
+    ."   " . ."  ## eax mov," CR 	\ #in
+    ."   $$ 80 int," CR
+    ."   " . ." reg-free" CR
+    ."   0 free>tos" CR
+    ."   ;" CR CR
+  THEN ;
+  
+ 0   1 sys-call exit
+ 0   2 sys-call fork
+ 3   3 sys-call read
+ 3   4 sys-call write
+ 3   5 sys-call open
+ 1   6 sys-call close
+ 3   7 sys-call waitpid
+ 2   8 sys-call creat
+ 2   9 sys-call link
+ 1  10 sys-call unlink
+ 3  11 sys-call execve
+ 1  12 sys-call chdir
+ 1  13 sys-call time
+ 3  14 sys-call mknod
+ 2  15 sys-call chmod
+ 3  16 sys-call chown
+-1  17 sys-call break
+-1  18 sys-call oldstat
+ 3  19 sys-call lseek
+ 0  20 sys-call getpid
+ 5  21 sys-call mount
+ 1  22 sys-call umount
+ 1  23 sys-call setuid
+ 0  24 sys-call getuid
+ 1  25 sys-call stime
+ 4  26 sys-call ptrace
+ 1  27 sys-call alarm
+-1  28 sys-call oldfstat
+ 0  29 sys-call pause
+ 2  30 sys-call utime
+-1  31 sys-call stty
+-1  32 sys-call gtty
+ 2  33 sys-call access
+ 1  34 sys-call nice
+ 1  35 sys-call ftime
+ 0  36 sys-call sync
+ 2  37 sys-call kill
+ 2  38 sys-call rename
+ 2  39 sys-call mkdir
+ 1  40 sys-call rmdir
+ 1  41 sys-call dup
+ 1  42 sys-call pipe
+ 1  43 sys-call times
+-1  44 sys-call prof
+ 1  45 sys-call brk
+ 1  46 sys-call setgid
+ 0  47 sys-call getgid
+ 2  48 sys-call signal
+ 0  49 sys-call geteuid
+ 0  50 sys-call getegid
+ 1  51 sys-call acct
+ 4  52 sys-call phys
+-1  53 sys-call lock
+ 3  54 sys-call ioctl
+ 3  55 sys-call fcntl
+-1  56 sys-call mpx
+ 2  57 sys-call setpgid
+-1  58 sys-call ulimit
+-1  59 sys-call oldolduname
+ 1  60 sys-call umask
+ 1  61 sys-call chroot
+ 2  62 sys-call ustat
+ 2  63 sys-call dup2
+ 0  64 sys-call getppid
+ 0  65 sys-call getpgrp
+ 0  66 sys-call setsid
+ 3  67 sys-call sigaction
+-1  68 sys-call sgetmask
+-1  69 sys-call ssetmask
+ 2  70 sys-call setreuid
+ 2  71 sys-call setregid
+ 1  72 sys-call sigsuspend
+ 1  73 sys-call sigpending
+ 2  74 sys-call sethostname
+ 2  75 sys-call setrlimit
+ 2  76 sys-call getrlimit
+ 2  77 sys-call getrusage
+ 2  78 sys-call gettimeofday
+ 2  79 sys-call settimeofday
+ 2  80 sys-call getgroups
+ 2  81 sys-call setgroups
+ 5  82 sys-call select
+ 2  83 sys-call symlink
+-1  84 sys-call oldlstat
+ 3  85 sys-call readlink
+ 1  86 sys-call uselib
+ 2  87 sys-call swapon
+ 3  88 sys-call reboot
+ 3  89 sys-call readdir
+-1  90 sys-call mmap
+ 2  91 sys-call munmap
+ 2  92 sys-call truncate
+ 2  93 sys-call ftruncate
+ 2  94 sys-call fchmod
+ 3  95 sys-call fchown
+ 2  96 sys-call getpriority
+ 3  97 sys-call setpriority
+ 4  98 sys-call profil
+ 2  99 sys-call statfs
+ 2 100 sys-call fstatfs
+ 3 101 sys-call ioperm
+ 2 102 sys-call socketcall
+ 3 103 sys-call syslog
+ 3 104 sys-call setitimer
+ 2 105 sys-call getitimer
+ 2 106 sys-call stat
+ 2 107 sys-call lstat
+ 2 108 sys-call fstat
+-1 109 sys-call olduname
+ 1 110 sys-call iopl
+ 0 111 sys-call vhangup
+ 0 112 sys-call idle
+ 1 113 sys-call vm86
+ 4 114 sys-call wait4
+ 1 115 sys-call swapoff
+ 1 116 sys-call sysinfo
+-1 117 sys-call ipc
+ 1 118 sys-call fsync
+ 1 119 sys-call sigreturn
+ 2 120 sys-call clone
+ 2 121 sys-call setdomainname
+ 1 122 sys-call uname
+ 3 123 sys-call modify_ldt
+ 1 124 sys-call adjtimex
+ 3 125 sys-call mprotect
+ 3 126 sys-call sigprocmask
+ 2 127 sys-call create_module
+ 5 128 sys-call init_module
+ 1 129 sys-call delete_module
+ 1 130 sys-call get_kernel_syms
+ 4 131 sys-call quotactl
+ 1 132 sys-call getpgid
+ 1 133 sys-call fchdir
+ 2 134 sys-call bdflush
+ 3 135 sys-call sysfs
+ 1 136 sys-call personality
+-1 137 sys-call afs_syscall
+ 1 138 sys-call setfsuid
+ 1 139 sys-call setfsgid
+ 5 140 sys-call llseek
+ 3 141 sys-call getdents
+-1 142 sys-call newselect
+ 2 143 sys-call flock
+ 3 144 sys-call msync
+ 3 145 sys-call readv
+ 3 146 sys-call writev
+ 0 147 sys-call getsid
+ 1 148 sys-call fdatasync
+ 1 149 sys-call sysctl
+ 2 150 sys-call mlock
+ 2 151 sys-call munlock
+ 1 152 sys-call mlockall
+ 0 153 sys-call munlockall
+ 2 154 sys-call sched_setparam
+ 2 155 sys-call sched_getparam
+ 3 156 sys-call sched_setscheduler
+ 1 157 sys-call sched_getscheduler
+ 0 158 sys-call sched_yield
+ 1 159 sys-call sched_get_priority_max
+ 1 160 sys-call sched_get_priority_min
+ 2 161 sys-call sched_rr_get_interval
+ 2 162 sys-call nanosleep
+ 4 163 sys-call mremap
+
+bye
+

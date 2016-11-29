@@ -1,0 +1,282 @@
+<HTML><HEAD><TITLE>FLK introduction</TITLE></HEAD><BODY>
+<TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="index.html">Previous</A></TD>
+    <TD><IMG SRC="flk.gif"></TD>
+    <TD><A HREF=code.html>Next</A></TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE><HR>
+<H1>FLK introduction</H1>
+
+<A NAME=history><H2>History and Objective</H2></A>
+FLK started as an experiment in my 1997 summer holidays. I tried to improve
+the performance of FPC by inlined assembler code. Within two evenings the
+basic concept that FLK uses was implemented.<p>
+Then the new semester began and there was little time for further work. Till
+February 1998 almost nothing happened except that I wrote the assembler.
+Within the next two month the system grew and became a fully ANS (draft)
+compatible FORTH.<p>
+I now want FLK to be a fast standard system. It is meant to be an experiment
+in both meta compilation and code generation, but it should be a fully
+functional standalone FORTH too.<p>
+Since most of my work turns around neural networks fast floating point support
+is nessesary. Together with vector and matrix operations and some
+visualiziation tools FLK could become a good system for experiments in that
+field.<p>
+A different field that I'm interested in is symbolic computation. Sooner or
+later FLK will contain a computer algebra tool. It therefore has to be fast in
+non-floating point calculations too.<p>
+
+<A NAME=usage><H2>Start-up and user interface</H2></A>
+To start FLK execute the program <TT>flk</TT>. Any commandline options are
+interpreted as file names to be <CODE>INCLUDED</CODE>.<p>
+When FLK is up and running you can enter words to execute. To include a file
+use <CODE>S" filename.ext" INCLUDED</CODE> or <CODE>INCLUDE</CODE>. The latter
+lets you input a filename using a different history list and completer.<p>
+A history list is accessible from the word <CODE>ACCEPT</CODE> only. If you
+press the up- or down-arrow key you can cycle your previously made inputs.
+Once you are sure that this the text you want press the return key and your
+text is appended to the history list and the word returns.<p>
+A completer is a special word to save you typing. Two completer words are
+implemented: One for the normal FORTH command line and one for filenames. If
+you want to learn to implement one yourself look in the files
+<TT>flkinput.fs</TT> and <TT>flktools.fs</TT> for the existing completers.<p>
+To activate the completer when <CODE>ACCEPT</CODE> is running press the
+Tabulator or Set-Tabulator key. In the FORTH commandline the completer
+searches the beginning of the word the cursor is in or behind. All words in
+the current search order with this beginning are searched and the longest
+common string of their names is generated. This string replaces the beginning
+in the inputline. If there is no word with this beginning one alert is
+produced, if there is more than one word with the beginning, two alerts are
+produced.<p>
+The filename completer takes the whole inputline and performs similiar to
+<TT>tcsh</TT>'s completer. It tries to expand the path level by level using
+the longest common string method similiar to the command line completer. Two
+alerts are produced if more than one file in the directory matches, one if
+none matches.<p>
+Upon startup all copies of flkkern (flk is one of them.) search for an system
+image to load in four places:
+<OL>
+  <LI>The current executable in the current directory. You can produce
+standalone executables this way.
+  <LI>The current executable in the installation directory. This is nessesary
+because argv[0] does not contain the path to the program.
+  <LI>The file flk.flk in the current directory. This is a way to store
+e.g. project specific systems under the same name.
+  <LI>The file default.flk in the installation directory as noted in the
+Makefile. This is meant to be a default system if no file or directory
+specific images could be found. 
+</OL>
+
+<A NAME=compiler><H2>Compiler basics</H2></A>
+FLK is an optimizing native code compiler. It acts similiar to the so-called
+nano-compilers where every word knows how to compile itself. In FLK only a few
+words, the so-called optimizer or primitives, can do this. Any word that isn't
+a primitive doesn't contain code to compile itself. Such words are compiled
+the usual way by <CODE>COMPILE,</CODE>. <p>
+With version 1.2 the so-called level 2 compiler words are introduced. They try
+to fold more than one word into fewer machine code than the separate compiling
+would produce. Since they have access to the last few literals (including
+CONSTANTs and CREATEd words) it is possible to include these literals into the
+code instead of loading a register and then working with that register.<p>
+The return stack is addressed by <CODE>esp</CODE>, the data stack by <CODE>ebp</CODE>.
+Since the indexed access using <CODE>ebp</CODE> requires an offset value this is
+the first opportunity to save time. Instead of increasing and decreasing
+<CODE>ebp</CODE> itself the offset is increased and decreased. At each access to
+the stack one <CODE>add</CODE> operation less is nessesary. Before calling another
+word or returning from this word the accumulated offset has to added to
+<CODE>ebp</CODE>.<p>
+Control-flow words like <CODE>IF</CODE> or <CODE>DO</CODE> have to save the offset to
+<CODE>ebp</CODE> and words like <CODE>THEN</CODE> or <CODE>LOOP</CODE> restore the value
+by adding the difference to <CODE>ebp</CODE>.<p>
+The next possible optimization is to keep the top few items of the data stack
+in the CPU registers to reduce fetch and store operations. Since every word
+has a different number of accepted and produced items a defined state has to
+be reached at the beginning of each word. In this state <CODE>eax</CODE> caches
+the top of stack item and no other registers (except <CODE>ebp</CODE> and
+<CODE>esp</CODE>) have a defined meaning.<p>
+Each primitive first resets the register allocator and then requests the
+stack items and free registers (in that order) it needs, performs its
+operation and eventually marks the requested register free or puts free
+registers onto the stack.<p>
+One important point to mention is that each saved image contains a relocation
+table. This table contains the addresses of cells whos contents have to be
+corrected relative to the memory address of the first byte of the image. The
+contents of these cells are absolute addresses. Words are provided for the
+handling of relocation issues.<p>
+
+<A NAME=primitives><H2>Adding your own primitives</H2></A>
+This section describes the creation of primitives by the example of the word
+<CODE>COUNT</CODE>. The only way to compile a primitive is to put it into the file
+<TT>flkprim.fs</TT>. If you want to write a compiling word without
+interpretation semantics it is better to program an immediate word an throw an
+exception if interpreting. <p>
+<CODE>COUNT</CODE> can be written as the colon definition:
+<PRE> : COUNT ( caddr -- caddr+1 len ) DUP CHAR+ SWAP C@ ; </PRE><p>
+As a primitive it is written as:
+<PRE> p: COUNT ( caddr -- caddr+1 len )
+  regalloc-reset
+  req-any
+  req-free
+  free0 free0 xor,
+  0 [tos0] free0l mov,
+  tos0 inc,
+  0 free&gt;tos ; </PRE><p>
+
+The line <CODE> p: COUNT ( c-addr1 -- c-addr2 u )</CODE> defines the primitive
+and informs about the stack effect. Only one space before the name of
+the primitive is allowed. Tabs are allowed after the name only if a space
+immediately follows the name.<p>
+The first thing to do is to reset the register alloctor using
+<CODE>regalloc-reset</CODE>. Now we request one item from the stack and one free
+register by <CODE>req-any req-free</CODE>. Then the actual code generation starts.
+<PRE>  free0 free0 xor,
+  0 [tos0] free0l mov,
+  tos0 inc, </PRE><p>
+The byte at caddr is fetched into the cleared <CODE>free0</CODE> meta register.
+Which register is hidden behind <CODE>free0</CODE> is not interesting. Neither the
+user nor the programmer need to know it.<p>
+The last line puts the <CODE>free0</CODE> register on top of the stack.<p>
+Other control words for the register allocator can be found in
+<TT>flkprim.fs</TT> in the definitions of the other primitives.<p>
+
+<A NAME=level2><H2>Adding your own level 2 compilers</H2></A>
+This section contains the desciption of a level 2 compiler (found in
+<TT>flkopt.fs</TT>).<p>
+Each level 2 optimizer consumes zero items and produces no items either. To
+declare an optimizer edit <TT>flkopt.fs</TT> for optimizers that work in host
+and target or <TT>flktopt.fs</TT> for those that only run in the target.<p>
+First thing to do is to declare the sequence to optimize away: 
+<CODE>opt( ''# '' + '' @ )opt:</CODE> does this. This optimizer is declared
+for the sequence <I>number additiion fetch</I>. Whenever this sequence is
+found, the following code is executed instead of their individual
+optimizers.<p>
+The rest of the word is very similiar to a primitive declaration. There are
+three exceptions: You have to delete the optimized words at the end of the
+word and you have to get or set the actual value of the number parameter. How
+to do this is shown in the code snippets below.<p>
+<PRE>opt( ''# '' + '' @ )opt: 
+    ( Get the actual value and a flag telling if it is an address. )
+    0 opt-getlit 			\ x rel?
+    ( Normal code generation. )
+    regalloc-reset
+    req-any 				\ tos0=offs
+    ?+relocate
+    [tos0] tos0 mov, 
+    ( All items used up. )
+    0 3 opt-remove
+    ;opt
+    
+opt( ''# ''# '' + )opt: 
+   ( get left parameter to + )
+   1 opt-getlit 			\ x1 rel1 
+   ( get right parameter to + )
+   0 opt-getlit 			\ x1 rel1 x0 rel0
+   ( If one is an address, result is an address to. )
+   ROT OR -ROT 				\ rel tos1 tos0 
+   ( Perform the actual calculation. )
+   + SWAP 				\ x rel
+   ( Store it back into the cache. )
+   0 opt-setlit
+   ( Delete the words optimized away from the cache. )
+   1 2 opt-remove 
+;opt
+</PRE>
+
+<A NAME=warn><H2>Unexpected behaviour</H2></A>
+This section is meant to be a warning. FLK is still a construction site. You
+could end up having your car buried under a pile of dirt if you don't drive
+carefully. :-)<p>
+But seriously, some of the mistakes made by users (and programmers) are not
+reported at the moment. Some of them never will.<p>
+Among these unreported errors are data stack over- and underflows, return
+stack over- and underflows and floating point stack overflows. Some of them
+can produce unexpected or wrong results, some of them cause segmentation
+faults.<p>
+For a more detailed list of ambiguous conditions see 
+<A HREF=ANS.html>here</A>.<p>
+
+<A NAME=benchmarks><H2>Benchmarks</H2></A>
+To summarize this section: 63 % of all statistics are faked. 17 % of all
+people know that.<p>
+Seriously: I used the benchmarks of <A
+HREF="http://www.complang.tuwien.ac.at/forth/bench.tar.gz">
+Anton Ertl's Benchmark suite</A> to compare the speed of FLK with that of
+gforth. You can indirectly compare several other systems with FLK at <A
+HREF="http://www.complang.tuwien.ac.at/forth/performance.html">Anton Ertl's
+performance web page</A>. <p>
+The following sections describe the benchmark programs, show a list of times
+of gforth and FLK and explain which optimiziers have been implemented to
+achieve the speed-up.<p>
+The used system was a 133MHz Pentium without MMX running Linux kernel 2.0.30
+and KDE. All times can differ a bit due to limited timer resolution and cpu
+load. The cpu used was between 97 and 99 % in all tests.<p>
+The initial state had no optimizers except combining <CODE>OVER</CODE> or
+<CODE>2DUP</CODE>, relational operators and <CODE>IF</CODE> and
+<CODE>WHILE</CODE> to allocate fewer registers and not to generate an
+intermediate flag on the stack. All other changes are incremental. These tests
+were performed with version 1.2 but aplly for later versions too.<p>
+
+<H3>Sieve</H3>
+What is a benchmark without the sieve of Erastothenes. The implementation in
+<TT>sieve.fs</TT> is a straight-forward one: Two nested loops to check and
+clear the flags. To have a reasonable time the search of all primes between 1
+and 8190 is repeated 1000 times. The most frequent used words are: <CODE>I C@
+C! DO +LOOP DUP</CODE.><p>
+<TABLE BORDER=2>
+<TR><TD>Optimization</TD><TD>Time of FLK in sec.</TD><TD>Speed factor
+(gforth: 14.37 sec)</TD>
+<TR><TD>initial test</TD><TD>3.94</TD><TD>3.6</TD>
+<TR><TD>DUP and +LOOP combined (1 register less used)</TD><TD>3.9</TD><TD>3.6</TD>
+<TR><TD>LOOP (short jumps when possible instead always near jumps)</TD><TD>3.7</TD><TD>3.9</TD>
+<TR><TD>I (esp access using SIB addressing instead exchanges and ebp access
+using MOD/RM addressing)</TD><TD>2.4</TD><TD>6</TD>
+</TABLE>
+As you can see in the second row saving a register when enough of them are
+available gains very little. Removing unnessary jump gains a bit more due to
+the saved space in the branch predictor of the pentium. The last change
+removes at least two AGIs (address generation interlock) per <CODE>I</CODE> in
+the innermost loop. That gains at least four cycles per loop.<p>
+
+<H3>Bubble sort</H3>
+Another classical benchmark: sorting 6000 random numbers. Implementation: two
+nested loops. The most frequent used words are: <CODE>I 2@ &gt; SWAP
+2!</CODE.><p>
+<TABLE BORDER=2>
+<TR><TD>Optimization</TD><TD>Time of FLK in sec.</TD><TD>Speed factor
+(gforth: 14.54 sec)</TD>
+<TR><TD>initial test</TD><TD>4.29</TD><TD>3.4</TD>
+<TR><TD>all opt. above</TD><TD>2.72</TD><TD>5.4</TD>
+</TABLE>
+
+<H3>Fibonacci</H3>
+This little word has two recursive calls and measures mostly call/return
+performance.<p>
+<TABLE BORDER=2>
+<TR><TD>Optimization</TD><TD>Time of FLK in sec.</TD><TD>Speed factor
+(gforth: 17.13 sec)</TD>
+<TR><TD>initial test</TD><TD>2.35</TD><TD>7.3</TD>
+<TR><TD>all opt. above</TD><TD>2.2</TD><TD>7.8</TD>
+<TR><TD>+ changed to SWAP +</TD><TD>2.16</TD><TD>7.9</TD>
+</TABLE>
+The change of <CODE>+</CODE> to </CODE>SWAP +</CODE> produces code that looks
+better before an <CODE>EXIT</CODE>. The four hundreds of a second saved can be
+blamed on the timer tolerance. 
+
+<HR><TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="index.html">Previous</A></TD>
+    <TD ALIGN=CENTER><H1>FLK</H1></TD>
+    <TD><A HREF=code.html>Next</A></TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE>
+</BODY></HTML>
+<!--  vim:tw=78 
+>
+

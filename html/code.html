@@ -1,0 +1,229 @@
+<HTML><HEAD><TITLE>FLK introduction</TITLE></HEAD><BODY>
+<TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="intro.html">Previous</A></TD>
+    <TD><IMG SRC="flk.gif"></TD>
+    <TD><A HREF=nonstd.html>Next</A></TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE><HR>
+<H1>Code produced by FLK and gcc</H1>
+This section compares the machine code produced by FLK and gcc for an
+equivalent piece of code.<p>
+
+The example code is the Fibonacci number calculator from <A
+HREF="http://www.complang.tuwien.ac.at/forth/performance.html">Anton Ertl's
+performance web page</A>.
+Its source code is very simple and equivalent to the mathematical defintion.
+<PRE>
+: fib                   ( n1 -- n2 )
+  dup 2 &lt; if
+    drop 1              \ fib(1)=fib(0)=1
+  else                  \ fib(n)=fib(n-2)+fib(n-1)
+   dup
+   1- recurse
+   swap 2 - recurse
+   +
+  then ;
+</PRE>
+<TT>gdb</TT> disassembles the code to: (I added the comments.)
+<PRE>
+0x8098afa  movl   %eax,%ecx             ; DUP
+0x8098afc  cmpl   $0x2,%ecx             ; 2 &lt; combined with the
+0x8098b02  jl     0x8098b09             ; IF
+0x8098b04  jmp    0x8098b13             ; IF (cont.)
+0x8098b09  movl   $0x1,%eax             ; DROP 1 (eax=TOS is reused) 
+0x8098b0e  jmp    0x8098b50             ; ELSE
+0x8098b13  movl   %eax,%ecx             ; DUP (no data flow analysis is
+                                        ; performed therefore the compiler
+                                        ; does not notice this unnessary
+                                        ; operation)
+0x8098b15  decl   %ecx                  ; 1-
+0x8098b16  movl   %eax,0x0(%ebp)        ; prepare call
+0x8098b1c  movl   %ecx,%eax             ; restore top of stack
+0x8098b1e  addl   $0xfffffffc,%ebp      ; correct stack pointer
+0x8098b24  call   0x8098afa             ; recursive call
+0x8098b29  movl   0x4(%ebp),%ecx        ; SWAP requires 2 items, load the 2nd
+0x8098b2f  subl   $0x2,%ecx             ; 2 - (notice, that ecx is TOS now)
+0x8098b35  movl   %eax,0x4(%ebp)        ; prepare call, flush registers
+0x8098b3b  movl   %ecx,%eax             ; restore TOS
+0x8098b3d  call   0x8098afa             ; 2nd recursive call
+0x8098b42  movl   0x4(%ebp),%ecx        ; + requires 2 items: eax=TOS
+                                        ; ecx=TOS[1]
+                                        ; implicit SWAP makess ecx=TOS
+                                        ; eax=TOS[1]
+0x8098b48  addl   %ecx,%eax             ; + frees TOS=ecx so no restoration of 
+                                        ; register usage is required
+0x8098b4a  addl   $0x4,%ebp             ; just correct the stack pointer
+0x8098b50  ret                          ; and return
+</PRE>
+<HR>
+The code produced by gcc from the C-function
+<PRE>
+unsigned fib( unsigned n)
+{
+  if( n&lt;2)
+    return 1;
+  return fib(n-1)+fib(n-2);
+}
+</PRE>
+is shown here:
+<PRE>
+0x8048480  pushl  %esi
+0x8048481  pushl  %ebx
+0x8048482  movl   0xc(%esp,1),%ebx
+0x8048486  cmpl   $0x1,%ebx             ; 1 &lt;=
+0x8048489  jbe    0x80484b0             ; INVERT IF
+0x804848b  leal   0xffffffff(%ebx),%eax ; DUP 1- (nice trick!!)
+0x804848e  pushl  %eax
+0x804848f  call   0x8048480             ; RECURSE
+0x8048494  movl   %eax,%esi             ; save result
+0x8048496  leal   0xfffffffe(%ebx),%eax ; 2 - (same trick)
+0x8048499  pushl  %eax
+0x804849a  call   0x8048480             ; RECURSE
+0x804849f  addl   %esi,%eax             ; +
+0x80484a1  addl   $0x8,%esp
+0x80484a4  popl   %ebx
+0x80484a5  popl   %esi
+0x80484a6  ret                          ; ELSE
+0x80484a7  leal   (%esi),%esi           
+0x80484a9  leal   0x0(%esi,1),%esi
+0x80484b0  movl   $0x1,%eax             ; DROP 1
+0x80484b5  popl   %ebx
+0x80484b6  popl   %esi
+0x80484b7  ret                          ; THEN ;
+</PRE>
+<HR>
+As you might have expected the code from gcc is a bit more efficient since
+it uses a global strategy to assign the registers but due to the complicated
+calling convention it is only a little bit faster than FLK's code.<p>
+The C-function took 1.86 seconds to execute while FLK's took (excluding
+loading and compiling just raw execution time) 2.0 seconds.<p>
+The speed gain by using a complicated C compiler which used 0.23 seconds to
+compile (instead of 0.17 seconds for loading and compiling together) compared
+to FLK is 0.14 seconds or 7 (in words seven) percent of FLK's run time.<p>
+The compiler overhead of C for this simple example is 0.06 seconds or 35
+percent of FLK's runtime and 26 percent of gcc's.<p>
+I don't want to know how this relation changes when measured for a real-world
+example of let's say ten thousand lines. <p>
+With a little bit of knowledge how FLK's optimizers work the code can be
+re-written as:
+<PRE>
+: fib                   ( n1 -- n2 )
+  2 OVER &gt; if
+    drop 1              \ fib(1)=fib(0)=1
+  else                  \ fib(n)=fib(n-2)+fib(n-1)
+   dup
+   1- recurse
+   swap 2 - recurse
+   +
+  then ;
+</PRE>
+It is absolutely equivalent to the example above but makes use of the
+<CODE>_OVER_rel_IF</CODE> level 2 optimizer.<p>
+The produced assember code
+<PRE>
+0x8098afa  cmpl   $0x2,%eax               ; 2 OVER &gt; 
+0x8098aff  jl     0x8098b06               ; IF
+0x8098b01  jmp    0x8098b10
+0x8098b06  movl   $0x1,%eax               ; DROP 1
+0x8098b0b  jmp    0x8098b4d
+0x8098b10  movl   %eax,%ecx               ; DUP
+0x8098b12  decl   %ecx                    ; 1-
+0x8098b13  movl   %eax,0x0(%ebp)          ; prepare call
+0x8098b19  movl   %ecx,%eax
+0x8098b1b  addl   $0xfffffffc,%ebp
+0x8098b21  call   0x8098afa               ; recurse
+0x8098b26  movl   0x4(%ebp),%ecx          ; SWAP 
+0x8098b2c  subl   $0x2,%ecx               ; 2 -
+0x8098b32  movl   %eax,0x4(%ebp)          ; prepare call
+0x8098b38  movl   %ecx,%eax
+0x8098b3a  call   0x8098afa               ; recurse
+0x8098b3f  movl   0x4(%ebp),%ecx
+0x8098b45  addl   %ecx,%eax               ; +
+0x8098b47  addl   $0x4,%ebp
+0x8098b4d  ret
+</PRE>
+is 3 bytes shorter and runs in 1.97 seconds (without loading and
+compiling).<p>
+The use of a special optimizer for <CODE>DUP 1-</CODE> generates
+<PRE>
+0x8098b89  cmpl   $0x2,%eax
+0x8098b8e  jl     0x8098b95 
+0x8098b90  jmp    0x8098b9f
+0x8098b95  movl   $0x1,%eax
+0x8098b9a  jmp    0x8098bdf
+0x8098b9f  leal   0xffffffff(%eax),%ecx  ; learned from gcc's code generator
+0x8098ba5  movl   %eax,0x0(%ebp)
+0x8098bab  movl   %ecx,%eax
+0x8098bad  addl   $0xfffffffc,%ebp
+0x8098bb3  call   0x8098b89
+0x8098bb8  movl   0x4(%ebp),%ecx         ; can't use it here
+0x8098bbe  subl   $0x2,%ecx
+0x8098bc4  movl   %eax,0x4(%ebp)
+0x8098bca  movl   %ecx,%eax
+0x8098bcc  call   0x8098b89 
+0x8098bd1  movl   0x4(%ebp),%ecx
+0x8098bd7  addl   %ecx,%eax
+0x8098bd9  addl   $0x4,%ebp
+0x8098bdf  ret
+</PRE>
+which uses 3 bytes more and runs in 1.91 seconds (without loading and
+compiling). This decreases the gain by using C to 2 percent of FLK's run time.
+<p>
+One could reduce the runtime further if the <CODE>IF</CODE> can be written as:
+<PRE>
+cmpl   $0x2,%eax
+jnl    L1              ; after ELSE
+movl   $0x1,%eax
+jmp    L2              ; after then
+L1:
+</PRE>
+That would save one operation (one clock cycle) and one entry in the branch
+target buffer of the pentium. From the experience with the same optimization
+in backward jumps (which is easier because you know the distance and can
+decide) this is a valuable thing to have.<p>
+After consulting the pentium opcode table I found near-call versions of all
+conditional jumps. With these it it possible to implement the code above
+independend from jump distance. The result is surpising: fib runs in 2.15
+seconds (without loading and compiling) now.<p>
+Obviously the branch predictor does not like this change. But I don't know if
+this is an exception or the rule so this optimization is kept. Next is the
+final version of the code.<p>
+<PRE>
+0x809910e  cmpl   $0x2,%eax
+0x8099113  jge    0x8099123 
+0x8099119  movl   $0x1,%eax
+0x809911e  jmp    0x8099163
+0x8099123  leal   0xffffffff(%eax),%ecx
+0x8099129  movl   %eax,0x0(%ebp)
+0x809912f  movl   %ecx,%eax
+0x8099131  addl   $0xfffffffc,%ebp
+0x8099137  call   0x809910e
+0x809913c  movl   0x4(%ebp),%ecx
+0x8099142  subl   $0x2,%ecx
+0x8099148  movl   %eax,0x4(%ebp)
+0x809914e  movl   %ecx,%eax
+0x8099150  call   0x809910e
+0x8099155  movl   0x4(%ebp),%ecx
+0x809915b  addl   %ecx,%eax
+0x809915d  addl   $0x4,%ebp
+0x8099163  ret
+</PRE>
+
+<HR><TABLE>
+<TR><TD></TD><TD ALIGN=CENTER><A HREF="index.html">Up</A> </TD><TD></TD></TR>
+<TR><TD><A HREF="into.html">Previous</A></TD>
+    <TD ALIGN=CENTER><H1>FLK</H1></TD>
+    <TD><A HREF=nonstd.html>Next</A></TD></TR>
+<TR><TD></TD>
+    <TD ALIGN=CENTER>
+      <A HREF="mailto:ai108@rz.tu-ilmenau.de">Mail the author</A></TD>
+    <TD></TD></TR>
+</TABLE>
+</BODY></HTML>
+<!--  vim:tw=78 
+>
+
