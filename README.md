@@ -1,0 +1,41 @@
+# Welcome to the FLK forth compiler.
+
+FLK is an optimizing native code compiler targeted for the Intel 386+ CPU
+running Linux. Porting to other Intel 386 Unixes should not be hard 
+(recompile it and go.) I'm curious to hear the results in doing so.
+
+FLK is distributed under the GNU public license. See the file COPYING for the
+details.
+
+For a successful compilation you need a running FORTH that is able to execute
+a script file. gforth and pfe work fine.
+
+To compile and install the system 
+
+    #this first part has already been done for Linux in the present distribution
+    make clean
+    make FORTH32=vfxlin    #default; or
+    make FORTH32=gforth -e #must be a 32-bit gforth; or
+    make FORTH32=sf        #or any other 32-bit Forth-94 system
+    #then
+    make install
+
+A set of HTML files is provided as a basic help in the directory `html`.
+The entry point is the file `index.html`.
+
+For guidance and advice: see *Advice and guidance*
+
+For more substantial question contact me. (e-mail below)
+
+Happy forthing.
+
+Lars Krueger  
+[mailto:ai108@rz.tu-ilmenau.de]()  
+URL: [http://www.rz.tu-ilmenau.de/~ai108/]()
+
+## 2016 update:
+
+Small changes by Anton Ertl to make it work on current Linux kernels
+(where malloc()ed memory is non-executable) and to make it build with
+VFX and SwiftForth.
+
