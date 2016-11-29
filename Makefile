@@ -124,6 +124,10 @@
 # Initial revision
 # 
 
+# a 32-bit Forth system
+FORTH32=vfxlin
+#FORTH32=gforth -e
+
 # Change to match your system.
 INSTALL_LIBDIR=/usr/local/lib/flk
 INSTALL_BINDIR=/usr/local/bin
@@ -131,6 +135,7 @@ INSTALL_BINDIR=/usr/local/bin
 # If DEBUGGING is not true, loader messages are suppressed and the loader is
 # optimized.
 DEBUGGING=false
+#DEBUGGING=true
 
 # If DELAY_FLUSH is true, the experimental terminal flushing code is compiled.
 DELAY_FLUSH=true
@@ -145,7 +150,7 @@ else
 MDEBUG=false
 endif
 
-CFLAGS=-Wall -pipe -D__UNIX__ -D__LINUX__ \
+CFLAGS=-m32 -Wall -pipe -D__UNIX__ -D__LINUX__ \
        -DINSTALL_DIR=\"${INSTALL_LIBDIR}/\" \
        -DINSTALL_BIN_DIR=\"${INSTALL_BINDIR}/\" 
 
@@ -160,7 +165,7 @@ CFLAGS+=-DDELAY_FLUSH
 endif
 
 INCLUDE=-I.
-LDFLAGS=-L/usr/lib -lncurses -rdynamic -ldl
+LDFLAGS=-m32 -L/usr/lib -lncurses -rdynamic -ldl
 
 ifeq (${MDEBUG},true)
 LDFLAGS+=-lefence
@@ -195,7 +200,7 @@ flkkern: ${OBJECTS}
 	${LINK.o} $^ -o $@
 
 flk.flk: ${SRCS} srcdir.fs linuxsc.fs
-	./f
+	$(FORTH32) "include f.fs"
 
 srcdir.fs: 
 	echo ${SRCDIRCMD} > srcdir.fs

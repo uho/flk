@@ -11,15 +11,15 @@ For a successful compilation you need a running FORTH that is able to execute
 a script file. gforth and pfe work fine.
 
 To compile and install the system 
-- edit Makefile to match your system (path)
-- edit f to match your system
-- execute: 
-   make install
-  or
-   make xinstall
-  (The latter builds xflk which uses the xforms library. If you don't have it,
-   just use "make install".)
-  
+
+#this first part has already been done for Linux in the present distribution
+make clean
+make FORTH32=vfxlin    #default; or
+make FORTH32=gforth -e #must be a 32-bit gforth; or
+make FORTH32=sf        #or any other 32-bit Forth-94 system
+#then
+make install
+
 A set of HTML files is provided as a basic help in the directory html.
 The entry point is the file index.html.
 
@@ -32,4 +32,10 @@ Happy forthing.
 Lars Krueger
 mailto:ai108@rz.tu-ilmenau.de
 URL: http://www.rz.tu-ilmenau.de/~ai108/
+
+2016 update:
+
+Small changes by Anton Ertl to make it work on current Linux kernels
+(where malloc()ed memory is non-executable) and to make it build with
+VFX and SwiftForth.
 

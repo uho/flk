@@ -201,13 +201,10 @@ ALSO META DEFINITIONS
 
 defined sourceline# [IF] \ gforth
 : curline sourceline# ;
-
 [ELSE] \ Unknown compiler
-.( Unknown compiler found. Please check flkmeta.fs for the compiler dependend)
-CR
-.( words and define the aliases for this systems.) CR
-BYE
-[THEN]
+cr .( Please define CURLINE in flkmeta.fs, using a placeholder for now )
+: curline -1 ;
+[THEN] [THEN]
 
 CREATE curfile 0 , 1024 ALLOT
 

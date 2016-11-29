@@ -119,7 +119,9 @@
 #include <dlfcn.h>
 #include <term.h>
 #include <signal.h>
-static struct DIR * glob_dir=0;
+#include <sys/time.h>
+#include <sys/mman.h>
+static DIR * glob_dir=0;
 static struct dirent * glob_dirent=0;
 static struct termios shell_ios;
 static struct termios prog_ios;
@@ -991,7 +993,7 @@ static SystemPrimitive primitives[]={
 static int readImage( int inFile, unsigned offs)
 {
   unsigned imglen, caLen, daLen, reloAlloc, reloCnt, caUse, daUse,i, imgBase,
-  oldCaLen, oldDaLen;
+    oldCaLen /*, oldDaLen*/;
   /* inFile is correctly positioned. */
 #define FP printf("%d\n",lseek(inFile,0,SEEK_CUR));
   READCELL( reloCnt);
@@ -1028,8 +1030,9 @@ static int readImage( int inFile, unsigned offs)
   }
   imglen=caLen+daLen;
   
-  Image=(unsigned *)calloc( imglen, sizeof( char));
-  if( !Image)
+  /* Image=(unsigned *)calloc( imglen, sizeof( char)); */
+  Image=(unsigned *)mmap(NULL, imglen, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+  if(Image==(unsigned *)MAP_FAILED)
   {
 #ifndef NDEBUG
    printf("Could not allocate memory for image.\n");
@@ -1059,7 +1062,7 @@ static int readImage( int inFile, unsigned offs)
   Image[HA_INIT_CHERE]=(unsigned )Image+caUse;
   Image[HA_INIT_HERE]=(unsigned )Image+daUse+caLen;
   oldCaLen=Image[HA_CODESIZE];
-  oldDaLen=Image[HA_DATASIZE];
+  /* oldDaLen=Image[HA_DATASIZE]; */
   Image[HA_CODESIZE]=caLen;
   Image[HA_DATASIZE]=daLen;
   
