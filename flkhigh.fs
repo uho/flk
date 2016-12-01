@@ -401,7 +401,7 @@ CREATE (console-fn) 0 , S" ..console.." ,S
 
 \ Display the GNU required text.
 : (c)  					( -- )
-  ." FLK version 1.3, Copyright (C) 1998 Lars Krueger" CR 
+  ." FLK version 1.3.1, Copyright (C) 1998 Lars Krueger" CR
   ." FLK comes with ABSOLUTELY NO WARRANTY; for details type WARRANTY ." CR
   ." This is free software, and you are welcome to redistribute it" CR
   ." under certain conditions; type LICENSE for details." CR
