@@ -4,7 +4,7 @@ RUN dpkg --add-architecture i386
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get -y install gcc:i386 libc6-dev:i386
 
-RUN apt-get -y install make wget
+RUN apt-get -y install make wget vim
 RUN apt-get -y install libncurses5-dev:i386
 
 # Install 32 bit gforth (working around missing dependency emacsen-commen:i386)
@@ -21,6 +21,8 @@ RUN make clean
 
 ENV TERM=vt100
 RUN make FORTH32="gforth -e"
-RUN make install
+RUN make FORTH32="gforth -e" install
+
+VOLUME /usr/local/flk
 
 CMD /usr/local/bin/flk

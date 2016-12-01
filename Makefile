@@ -235,4 +235,10 @@ dist:	ci
 	echo Version ${VERSION} >version.${VERSION}.log
 	rlog -h ${RCSfiles} >>version.${VERSION}.log
 
+build:	Dockerfile
+	docker build -t flk .
+
+run:
+	docker run -i -t --rm -v `pwd`:/usr/local/flk flk
+
 include .depends
