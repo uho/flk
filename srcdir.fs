@@ -1,1 +1,1 @@
-: SRCDIR S" /home/anton/flk/" ; 
+: SRCDIR S" /home/anton/flk-1.3.2/" ; 

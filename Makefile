@@ -150,7 +150,7 @@ else
 MDEBUG=false
 endif
 
-CFLAGS=-m32 -Wall -Wno-unused-result -pipe -D__UNIX__ -D__LINUX__ \
+CFLAGS=-m32 -Wall -pipe -D__UNIX__ -D__LINUX__ \
        -DINSTALL_DIR=\"${INSTALL_LIBDIR}/\" \
        -DINSTALL_BIN_DIR=\"${INSTALL_BINDIR}/\" 
 
@@ -197,19 +197,19 @@ xflk: flk flkXforms.fs flkcontrol.fs
 	./flk flkXforms.fs flkcontrol.fs 
 
 flkkern: ${OBJECTS}
-	${LINK.o} $^ -o $@ $(LDFLAGS)
+	${LINK.o} $^ -o $@
 
 flk.flk: ${SRCS} srcdir.fs linuxsc.fs
-	$(FORTH32) "include f.fs"
+	$(FORTH32) 's" f.fs" included'
 
 srcdir.fs: 
 	echo ${SRCDIRCMD} > srcdir.fs
 
 clean: 
-	rm -f srcdir.fs flk.flk default.flk flk xflk flkkern ${OBJECTS}
+	rm srcdir.fs flk.flk default.flk flk xflk flkkern ${OBJECTS}
 
 depend: 
-	rm -f .depends
+	rm .depends
 	make .depends
 
 .depends:
@@ -234,11 +234,5 @@ dist:	ci
         flk/makefile.wat flk/f flk/mksc flk/linuxsc.fs)
 	echo Version ${VERSION} >version.${VERSION}.log
 	rlog -h ${RCSfiles} >>version.${VERSION}.log
-
-build:	Dockerfile
-	docker build -t flk .
-
-run:
-	docker run -i -t --rm -v `pwd`:/usr/local/flk flk
 
 include .depends
