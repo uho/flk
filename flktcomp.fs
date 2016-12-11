@@ -293,6 +293,11 @@ CREATE (word-pad) #WORD-PAD CHARS ALLOT
   CHERE SWAP ! 				\ back
 ;
 
+\ Convert name to a printable string
+: NAME>STRING                           ( nfa -- c-addr u )
+   COUNT 
+;
+
 \ Check if the word exists and warn if so. Create a header and fill it with
 \ default entries.
 : (namedHeader) 			( s l -- )
