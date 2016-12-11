@@ -457,6 +457,8 @@ BINARY
 00000010 CONSTANT HF-VISIBLE		\ word is visible (not compiling)
 00000100 CONSTANT HF-CREATED		\ word has been CREATEd
 00001000 CONSTANT HF-OIMMEDIATE 	\ word's opt.sem. is immediate
+00010000 CONSTANT HF-INDIRECT		\ header is indirect (alias)
+00100000 CONSTANT HF-TEMPORARY		\ header is temporary
 DECIMAL
 
 \ Header structure

@@ -210,6 +210,9 @@
 \ Write the name of the word and advance the counters.
 : words-disp-word 				( l c xt -- l c xt )
 ( OK )
+  DUP >FLAGS C@
+  DUP HF-TEMPORARY AND 
+  IF HF-VISIBLE AND 0= IF EXIT THEN ." |" ELSE DROP THEN
   DUP >NAME COUNT 				\ l c xt na nl
   FLOCK OVER 					\ l c xt na nl c nl
   + 2 + COLS >= IF 				\ l c xt na nl
@@ -239,6 +242,19 @@
     words-disp-words 				\ wid lines col
     ROT CELL+ -ROT 
   LOOP 2DROP DROP ;
+
+\ make temporary words invisible 
+: hide 					( -- )
+( OK )
+  TOP-VOC  					\ wid 
+  #BUCKETS 0 DO 				\ wid 
+    DUP 					\ wid wid
+    BEGIN @ DUP IMAGE-BASE <> WHILE
+       DUP >FLAGS DUP C@ HF-TEMPORARY AND 
+       IF DUP C@ HF-VISIBLE INVERT AND OVER C! THEN DROP
+    REPEAT DROP
+    CELL+ 
+  LOOP DROP ;
 
 \ See standard.
 : ENVIRONMENT?  				( c-addr u -- false | i*x true )

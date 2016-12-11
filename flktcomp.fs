@@ -310,7 +310,12 @@ CREATE (word-pad) #WORD-PAD CHARS ALLOT
   2DUP >R >R name>hash 			\ l back 
   SWAP HEADERLEN + CHERE + 		\ back cfa 
   IMAGE-BASE 				\ back cfa ocfa
-  0  					\ back cfa o-cfa flags
+  HEADERLESS @ ?DUP 
+  IF 0> IF -1 HEADERLESS +! THEN
+     HF-TEMPORARY
+  ELSE 
+    0
+  THEN 					\ back cfa o-cfa flags
   R> R> 				\ back cfa o-cfa flags s l 
   (buildHeader) ;
 
@@ -372,6 +377,22 @@ CREATE (word-pad) #WORD-PAD CHARS ALLOT
     (opt-add-xt)
   THEN
 ;
+
+\ set temporary bit in header 
+: TEMPORARY 				( -- )
+( OK )
+  lastheader 				\ xt
+  DUP 0= IF ILLEGAL-IMMEDIATE-EXCEPTION THROW THEN
+  >FLAGS DUP C@ HF-TEMPORARY OR
+  SWAP C! ;
+
+\ set indirect bit in header (for alias definitions)
+: INDIRECT 				( -- )
+( OK )
+  lastheader 				\ xt
+  DUP 0= IF ILLEGAL-IMMEDIATE-EXCEPTION THROW THEN
+  >FLAGS DUP C@ HF-INDIRECT OR
+  SWAP C! ;
 
 \ See standard.
 : IMMEDIATE 				( -- )
@@ -790,7 +811,11 @@ VARIABLE abort"-addr
 \ Relocated VALUE.
 : RVALUE 				( x -<name>- )
 ( OK )
-  TRUE (value) ; 
+  TRUE (value) ;
+
+\ Define ALIAS
+: ALIAS                                 ( xt -<name>- )
+  CREATE INDIRECT lastheader >DFA ! ;
 
 \ Factor of AHEAD and IF.
 : (ahead) 				( xt -- )
