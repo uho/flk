@@ -1,1 +1,1 @@
-: SRCDIR S" /home/anton/flk/" ; 
+: SRCDIR S" /usr/local/flk/" ; 

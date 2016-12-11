@@ -322,13 +322,19 @@ CODE-SIZE + CONSTANT DATA-ORIGIN
     ." This is surely a bug in the metacompiler." CR
     BYE
   THEN  ;
-  
+
+1 cells 4 <> [if]
+    cr .( The FLK metacompiler only works properly on a 32-bit Forth,)
+    cr .( but is apparently not necessary for building FLK,)
+    cr .( so exit without error.)
+    cr bye
+[then]
+
 \ Since this meta-compiler should have no environmental dependency, we need to
 \ redefine ! and C! when data has to be stored in the target. While we are at
 \ it, all addresses there are relative to the start of TARGET.
 S" ADDRESS-UNIT-BITS" ENVIRONMENT? INVERT [IF]
-.( Environment query failed.) CR
-BYE
+8
 [THEN]
 
 8 = [IF]
